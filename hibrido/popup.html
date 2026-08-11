@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>GeoLead</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-header">
+    <div class="logo-container">
+      <img src="logo-removebg.png" alt="GeoLead" class="logo-img">
+    </div>
+    <div style="position: absolute; right: 20px; z-index: 2;">
+      <select id="langSelect" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 4px 8px; font-family: inherit; font-size: 12px; cursor: pointer; outline: none;">
+        <option value="pt" style="color: black;">PT-BR</option>
+        <option value="en" style="color: black;">EN</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- NAVEGAÇÃO PRINCIPAL -->
+  <div class="main-tabs">
+    <button id="navExtractor" class="main-tab-btn active"><i class="fas fa-map-location-dot"></i> <span data-i18n="navExtractor">1. Extrator</span></button>
+    <button id="navSender" class="main-tab-btn"><i class="fab fa-whatsapp"></i> <span data-i18n="navSender">2. Disparador</span></button>
+  </div>
+
+  <div class="container">
+    
+    <!-- ABA EXTRATOR -->
+    <div id="viewExtractor" class="view-section active">
+      <div class="card">
+        <div class="section-header">
+          <h3 class="section-title" data-i18n="titleExtract">Buscar Leads no Google Maps</h3>
+        </div>
+        <p class="help-text" data-i18n="helpText1">1. Digite o que deseja buscar e clique na lupa para abrir o Maps.</p>
+        
+        <div class="input-group">
+          <span class="input-prefix" style="padding: 0 10px;"><i class="fas fa-search"></i></span>
+          <input type="text" id="extractQuery" data-i18n-ph="placeholderSearch" placeholder="Ex: Dentistas em São Paulo" style="flex:1; border:none; padding:12px; font-size:14px; outline:none; font-family:inherit; color:var(--text-main); background:transparent;">
+          <button id="btnSearchMaps" class="btn-primary" style="border:none; padding:0 20px; cursor:pointer; font-size:16px; transition:0.2s;"><i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <p class="help-text mt-15" data-i18n="helpText2">2. Com a página do Maps aberta e os resultados carregados, ajuste os filtros e clique abaixo:</p>
+        
+        <div class="filters-grid">
+          <label class="filter-card">
+            <input type="checkbox" id="filterNoWebsite">
+            <span class="filter-name" data-i18n="filterNoWebsite">Ignorar quem possui site</span>
+          </label>
+          <label class="filter-card">
+            <input type="checkbox" id="filterPhone">
+            <span class="filter-name" data-i18n="filterPhone">Exigir telefone</span>
+          </label>
+          <label class="filter-card">
+            <input type="checkbox" id="filterEmail">
+            <span class="filter-name" data-i18n="filterEmail">Exigir E-mail</span>
+          </label>
+          <label class="filter-card">
+            <input type="checkbox" id="filterSocial">
+            <span class="filter-name" data-i18n="filterSocial">Exigir Redes Sociais</span>
+          </label>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label class="filter-card" style="background: #f0fdf4; border-color: var(--primary);">
+            <input type="checkbox" id="autoSendAfter">
+            <span class="filter-name" data-i18n="autoSendAfter" style="color: var(--primary); font-weight: 600;">Começar disparo automático ao terminar</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button id="btnStartExtract" class="btn-primary btn-large" style="flex: 2;">
+            <i class="fas fa-cogs"></i> <span data-i18n="btnStartExtract">Iniciar Extração na Aba Atual</span>
+          </button>
+          <button id="btnStopExtract" class="btn-ghost" style="flex: 1; border: 1px solid #d32f2f; color: #d32f2f; display: none; cursor: pointer; border-radius: 8px; font-weight: 500;">
+            <i class="fas fa-stop"></i> <span data-i18n="btnStopExtract">Parar</span>
+          </button>
+        </div>
+
+        <div class="terminal mt-15" id="extractionTerminal">
+          <div class="log-entry system" data-i18n="terminalWait">Pronto. Aguardando comando...</div>
+        </div>
+        
+        <div id="extractionActions" class="mt-15" style="display:none; gap: 10px;">
+          <button id="btnDownloadExtracted" class="btn-ghost" style="flex:1; border:1px solid var(--primary); color:var(--primary)">
+            <i class="fas fa-download"></i> <span data-i18n="btnDownloadCsv">Baixar CSV</span>
+          </button>
+          <button id="btnSendToSendList" class="btn-primary" style="flex:1">
+            <i class="fas fa-paper-plane"></i> <span data-i18n="btnSendToSender">Enviar p/ Disparador</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA DISPARADOR -->
+    <div id="viewSender" class="view-section" style="display: none;">
+      <div class="card">
+        <div class="section-header">
+          <h3 class="section-title"><span data-i18n="titleContacts">Contatos</span> <span id="numCount" class="badge">0</span></h3>
+          <button id="btnUploadCsv" class="btn-ghost" data-i18n-title="titleImport" title="Importar Lista, CSV ou Excel">
+            <i class="fas fa-file-import"></i> <span data-i18n="btnImport">Importar</span>
+          </button>
+          <input type="file" id="csvFileInput" accept=".csv,.txt,.xlsx,.xls" style="display: none;">
+        </div>
+        
+        <div class="input-group">
+          <span class="input-prefix">+55</span>
+          <input type="text" id="phoneInput" data-i18n-ph="placeholderPhone" placeholder="Número (e aperte Enter)">
+          <button id="btnAddPhone" class="btn-icon"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <div class="numbers-list" id="numbersList">
+          <div class="empty-state" id="emptyState" data-i18n="emptyContacts">Nenhum contato adicionado</div>
+        </div>
+      </div>
+
+      <div class="card mt-15">
+        <div class="section-header">
+          <h3 class="section-title" data-i18n="titleMessage">Mensagem</h3>
+        </div>
+        <div class="tabs-container">
+          <div class="tab-btn active" id="tabText"><i class="fas fa-font"></i> <span data-i18n="tabText">Texto</span></div>
+          <div class="tab-btn" id="tabAudio"><i class="fas fa-microphone"></i> <span data-i18n="tabAudio">Áudio</span></div>
+        </div>
+
+        <!-- CONTEÚDO TEXTO -->
+        <div id="textSection">
+          <textarea id="message" class="modern-input" data-i18n-ph="placeholderMessage" placeholder="Escreva sua mensagem..."></textarea>
+          
+          <div class="mt-15" style="display: flex; gap: 10px;">
+            <button id="btnAttach" class="btn-ghost" style="flex: 1;"><i class="fas fa-paperclip"></i> <span data-i18n="btnAttach">Anexar</span></button>
+            <input type="file" id="attachmentInput" accept="image/*,video/*,application/pdf" style="display: none;">
+            <button id="btnRemoveAttach" class="btn-ghost" style="display: none; color: var(--danger);"><i class="fas fa-times"></i></button>
+          </div>
+          <div id="attachmentName" style="font-size: 11px; color: var(--text-muted); margin-top: 5px;" data-i18n="noAttachment">Nenhum anexo selecionado</div>
+        </div>
+
+        <!-- CONTEÚDO ÁUDIO -->
+        <div id="audioSection" style="display: none;">
+          <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
+            <button id="btnRecordAudio" class="btn-primary" style="flex: 1;">
+              <i class="fas fa-microphone"></i> <span data-i18n="btnRecord">Gravar Áudio</span>
+            </button>
+            <button id="btnStopRecord" class="btn-ghost" style="flex: 1; display: none; color: var(--danger); border-color: var(--danger);">
+              <i class="fas fa-stop"></i> <span data-i18n="btnStopRecord">Parar Gravação</span>
+            </button>
+            <span id="recordTimer" style="font-family: monospace; font-size: 14px;">00:00</span>
+          </div>
+          <div class="mt-15" style="display: flex; align-items: center; gap: 10px;">
+            <audio id="audioPreview" controls style="display: none; width: 100%; height: 35px;"></audio>
+            <button id="btnRemoveAudio" class="btn-ghost" style="display: none; color: var(--danger); padding: 5px 10px;"><i class="fas fa-trash"></i></button>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;" data-i18n="tipAudio">O áudio será enviado como se tivesse sido gravado na hora!</div>
+        </div>
+        
+        <div id="msgWarning" style="color: var(--danger); font-size: 11px; margin-top: 10px; display: none;" data-i18n="msgWarning">
+          Você precisa definir uma mensagem de texto ou um áudio.
+        </div>
+      </div>
+
+      <div class="card mt-15" style="padding: 12px 20px;">
+        <div class="section-header" style="margin-bottom: 12px;">
+          <h3 class="section-title" data-i18n="delayLabel"><i class="fas fa-clock" style="color: var(--primary);"></i> Intervalo de Envio</h3>
+        </div>
+        
+        <!-- Delay configuration -->
+        <label class="filter-card" style="margin-bottom: 10px;">
+          <input type="checkbox" id="useRandomDelay">
+          <span class="filter-name" data-i18n="useRandomDelay">Usar variação aleatória de tempo</span>
+        </label>
+        
+        <div id="fixedDelayContainer" class="delay-settings-box">
+          <span class="delay-label">Aguardar:</span>
+          <input type="number" id="delayValue" class="modern-input delay-input" value="10" min="1">
+          <select id="delayUnit" class="modern-input delay-select">
+            <option value="1">Segundos</option>
+            <option value="60">Minutos</option>
+          </select>
+        </div>
+        
+        <div id="randomDelayContainer" class="delay-settings-box" style="display: none;">
+          <span class="delay-label" data-i18n="minLabel">Mín:</span>
+          <input type="number" id="delayMin" class="modern-input delay-input" value="10" min="1">
+          <span class="delay-label" data-i18n="maxLabel">Máx:</span>
+          <input type="number" id="delayMax" class="modern-input delay-input" value="23" min="1">
+          <select id="delayUnitRandom" class="modern-input delay-select">
+            <option value="1">Segundos</option>
+            <option value="60">Minutos</option>
+          </select>
+        </div>
+        
+        <!-- Pause configuration -->
+        <label class="filter-card" style="margin-bottom: 10px; margin-top: 15px;">
+          <input type="checkbox" id="usePause">
+          <span class="filter-name" data-i18n="usePause">Pausar envios (Simular humano)</span>
+        </label>
+        
+        <div id="pauseContainer" class="delay-settings-box" style="display: none;">
+          <span class="delay-label" data-i18n="pauseText1">Pausar</span> 
+          <input type="number" id="pauseDuration" class="modern-input delay-input" value="5" min="1"> 
+          <span class="delay-label" data-i18n="pauseText2">min a cada</span>
+          <input type="number" id="pauseEvery" class="modern-input delay-input" value="30" min="1">
+          <span class="delay-label" data-i18n="pauseText3">msgs</span>
+        </div>
+      </div>
+
+      <button id="startBtn" class="btn-primary btn-large mt-15" disabled>
+        <i class="fas fa-paper-plane"></i> <span data-i18n="btnStartSend">Iniciar Disparos</span>
+      </button>
+      <button id="stopBtn" class="btn-danger btn-large mt-15" style="display: none;">
+        <i class="fas fa-stop"></i> <span data-i18n="btnStopSend">Parar</span>
+      </button>
+
+      <div class="status-bar">
+        <div class="status-item">
+          <span class="status-label" data-i18n="statSent">Enviados</span>
+          <span class="status-value text-blue" id="sentCount">0</span>
+        </div>
+        <div class="divider"></div>
+        <div class="status-item">
+          <span class="status-label" data-i18n="statErrors">Falhas</span>
+          <span class="status-value text-red" id="errCount">0</span>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- TELA DE LICENÇA PREMIUM (OCULTA POR PADRÃO) -->
+  <div id="licenseOverlay" class="license-overlay" style="display: none;">
+    <div class="premium-license-card">
+      
+      <div class="license-header">
+        <div class="lock-icon-container">
+          <img src="kiwify-logo.png" alt="Kiwify Logo" style="width: 45px; object-fit: contain;">
+        </div>
+        <h2>Seu Teste Expirou</h2>
+        <p>O período de 2 dias grátis chegou ao fim. Para continuar usando a máquina de vendas GeoLead sem interrupções, adquira sua licença vitalícia.</p>
+      </div>
+
+      <a href="https://pay.kiwify.com.br/aPkImjR" target="_blank" class="btn-buy-kiwify">
+        <i class="fas fa-shopping-cart"></i> Desbloquear Acesso Vitalício
+      </a>
+
+      <div class="license-divider">
+        <span>Já comprou?</span>
+      </div>
+
+      <div class="license-activation">
+        <div class="activation-input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="licenseEmailInput" placeholder="Digite seu E-mail de compra" autocomplete="email">
+          <button id="btnActivateLicense" title="Validar E-mail"><i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div id="licenseError" class="license-error-msg" style="display: none;">
+          <i class="fas fa-exclamation-circle"></i> E-mail não encontrado ou compra não aprovada.
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- TELA DE SUCESSO (OCULTA POR PADRÃO) -->
+  <div id="successOverlay" class="success-overlay" style="display: none;">
+    <div class="success-card">
+      <div class="success-icon-container">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h2>Muito Obrigado!</h2>
+      <p>Sua licença foi ativada com sucesso. Bem-vindo(a) definitivo ao GeoLead!</p>
+      <button id="btnCloseSuccess" class="btn-success-close">Começar a Usar</button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="xlsx.full.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
