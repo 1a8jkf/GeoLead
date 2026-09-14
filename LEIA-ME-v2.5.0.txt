@@ -1,0 +1,79 @@
+GeoLead 2.5.0 — Fila de campanhas e progresso persistente
+=========================================================
+
+REGISTRO DE ALTERAÇÕES
+
+1. O Disparador agora permite escolher diretamente qualquer lista salva no dashboard.
+2. Várias listas podem ser colocadas em uma fila ordenável. A lista seguinte só começa depois de a anterior terminar.
+3. Cada lista da fila cria sua própria campanha no dashboard, preservando contatos, resultados e configuração de follow-ups.
+4. A barra de progresso mostra total processado, enviados, falhas, percentual, campanha atual e avanço individual de cada lista.
+5. Contatos repetidos entre listas são disparados uma única vez, respeitando a primeira campanha em que aparecem.
+6. A preparação do WhatsApp após F5 agora usa um handshake de carregamento: o primeiro contato só é entregue quando o aplicativo está pronto.
+7. Um watchdog persistente libera tarefas órfãs após navegações ou recarregamentos inesperados, evitando que a fila permaneça congelada.
+8. Usuários em teste voltam a ver a Kiwify no cabeçalho junto de um contador regressivo baseado na data persistida.
+9. O início do trial possui cópia de segurança local; fechar o popup ou o Chrome não reinicia nem paralisa a contagem.
+10. O seletor internacional de DDI incluído no ZIP enviado foi preservado.
+
+RECURSOS DA VERSÃO 2.4.1
+
+- O GeoLead reutiliza ou abre o WhatsApp Web em uma aba inativa automaticamente.
+- A gravação prioriza MP4/M4A, valida a assinatura binária e corrige nome, extensão e MIME.
+- Se o WhatsApp recusar o áudio como mídia, os mesmos bytes são reenviados pelo seletor de documento.
+
+RECURSOS DA VERSÃO 2.4
+
+1. Todo disparo iniciado cria uma campanha no dashboard, mantendo os contatos e o resultado do envio inicial.
+2. A aba “Campanhas” permite configurar até três follow-ups de texto por campanha.
+3. Cada etapa usa um modelo salvo no dashboard e resolve o Spintax separadamente para cada contato.
+4. Os prazos são persistidos no Chrome; ao reabrir o navegador, o GeoLead recalcula o tempo decorrido e retoma tarefas vencidas.
+5. Quando necessário, o WhatsApp Web é reutilizado ou aberto em uma aba inativa, sem depender da aba que o usuário está visualizando.
+6. Antes de enviar um follow-up, a conversa é aberta e analisada. Se houver resposta após a última mensagem da campanha, os próximos envios daquele contato são cancelados.
+7. Envios interrompidos usam um identificador de execução e uma mensagem pendente persistida para evitar duplicação após suspensão ou reinício.
+8. Campanhas podem ser pausadas, retomadas, excluídas e revisadas por contato.
+9. Horário inicial, horário final e inclusão de fins de semana são funcionais para os follow-ups.
+10. A configuração exige confirmação explícita de que destinatários, modelos e horários foram revisados.
+
+COMO FUNCIONA EM SEGUNDO PLANO
+
+- Enquanto o Chrome estiver aberto, trocar de aba não interrompe o disparador nem o agendador.
+- Se não houver uma aba do WhatsApp Web, o GeoLead abre uma aba inativa e aguarda o carregamento.
+- Com o navegador totalmente fechado, extensões do Chrome não executam tarefas. O GeoLead salva todos os prazos e estados localmente.
+- Ao abrir o Chrome novamente, o evento de inicialização recria o alarme, identifica tarefas vencidas e continua o processamento.
+- Se a sessão do WhatsApp tiver expirado, a campanha indica “Conectar WhatsApp” e tenta novamente depois da autenticação.
+
+CONFIGURANDO UMA CAMPANHA
+
+1. Crie modelos de texto na aba “Modelos” do dashboard. Anexos de modelos não são usados nos follow-ups automáticos.
+2. Envie os contatos pelo Disparador normalmente.
+3. Abra Dashboard > Campanhas e clique em “Configurar follow-ups”.
+4. Ative de uma a três etapas, defina o prazo e escolha um modelo para cada uma.
+5. Ajuste o horário permitido e os fins de semana.
+6. Revise os destinatários e marque a confirmação antes de ativar.
+
+PROTEÇÕES CONTRA ENVIO INDEVIDO
+
+- Uma resposta recebida encerra a sequência daquele contato.
+- Se o GeoLead não conseguir determinar com segurança o estado da conversa, o contato vai para “Revisão necessária” em vez de receber uma mensagem às cegas.
+- Falhas técnicas são tentadas novamente de forma limitada; após três falhas, exigem revisão manual.
+- Um follow-up que chegou a ser enviado antes de uma interrupção é reconhecido na conversa e registrado sem ser enviado novamente.
+
+RECURSOS PRESERVADOS
+
+- Corpo compacto de 550 px; o dashboard não alarga a extensão.
+- Extração do Google Maps, listas nomeadas, download e mesclagem.
+- Busca complementar de e-mails e redes sociais em sites públicos, quando autorizada.
+- Modelos com Spintax, anexos e tradução PT-BR/EN.
+- Intervalos fixos ou aleatórios e pausas de comportamento humano.
+- Seletor e diagnóstico de microfone e formatos de áudio compatíveis.
+- Período de avaliação, ativação por licença, logo da Kiwify e link de compra.
+
+COMO ATUALIZAR
+
+1. Extraia este ZIP em uma pasta permanente.
+2. Abra chrome://extensions.
+3. Ative “Modo do desenvolvedor”.
+4. Substitua a pasta anterior por GeoLead_Oficial desta versão.
+5. Clique em “Carregar sem compactação” ou em “Atualizar”.
+6. Recarregue as abas do Google Maps e do WhatsApp Web.
+
+Use contatos e automações de acordo com consentimento, LGPD e as regras do WhatsApp.

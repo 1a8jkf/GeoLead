@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "GeoLead",
+  "version": "2.6.0",
+  "description": "Organizador de contatos e assistente de produtividade comercial para gestão de leads.",
+  "permissions": ["storage", "identity", "identity.email", "alarms"],
+  "host_permissions": [
+    "*://web.whatsapp.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://web.whatsapp.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["injected.js"],
+      "matches": ["*://web.whatsapp.com/*"]
+    }
+  ]
+}

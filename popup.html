@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GeoLead</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-header">
+      <div class="logo-container">
+        <img src="logo-removebg.png" alt="GeoLead" class="logo-img" />
+      </div>
+      <div class="header-actions">
+        <a
+          id="trialStatusButton"
+          class="trial-status-pill"
+          href="https://pay.kiwify.com.br/aPkImjR"
+          target="_blank"
+          rel="noreferrer"
+          style="display: none"
+          title="Gerenciar licença"
+        >
+          <img src="kiwify-logo.png" alt="Kiwify" />
+          <span>
+            <small data-i18n="trialLabel">Período de teste</small>
+            <b id="trialCountdown">2d 00h</b>
+          </span>
+        </a>
+        <button
+          class="header-icon-btn"
+          id="btnDashboard"
+          title="Dashboard de leads"
+          aria-label="Abrir dashboard de leads"
+        >
+          <i class="fas fa-chart-simple"></i>
+        </button>
+        <select
+          id="langSelect"
+          style="
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+          "
+        >
+          <option value="pt" style="color: black">PT-BR</option>
+          <option value="en" style="color: black">EN</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- NAVEGAÇÃO PRINCIPAL -->
+    <div class="main-tabs">
+      <button id="navExtractor" class="main-tab-btn active">
+        <i class="fas fa-map-location-dot"></i>
+        <span data-i18n="navExtractor">1. Extrator</span>
+      </button>
+      <button id="navSender" class="main-tab-btn">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="navSender">2. Disparador</span>
+      </button>
+    </div>
+
+    <div class="container">
+      <!-- DASHBOARD DE LEADS -->
+      <div id="viewDashboard" class="view-section">
+
+        <div class="dashboard-view-tabs">
+          <button id="dashTabCurrent" class="active">
+            <i class="fas fa-bolt"></i>
+            <span data-i18n="dashCurrentTab">Extração atual</span>
+          </button>
+          <button id="dashTabLists">
+            <i class="fas fa-folder-open"></i>
+            <span data-i18n="dashListsTab">Listas salvas</span>
+            <b id="dashSavedListCount">0</b>
+          </button>
+          <button id="dashTabTemplates">
+            <i class="fas fa-message"></i>
+            <span data-i18n="dashTemplatesTab">Modelos</span>
+            <b id="dashTemplateCount">0</b>
+          </button>
+          <button id="dashTabCampaigns">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span data-i18n="dashCampaignsTab">Campanhas</span>
+            <b id="dashCampaignCount">0</b>
+          </button>
+        </div>
+
+        <div id="dashboardCurrentPane">
+          <section class="dashboard-progress-card" id="dashboardProgressCard">
+            <div class="dashboard-progress-head">
+              <div>
+                <span class="live-status" id="dashStatus"
+                  ><i></i>
+                  <span data-i18n="dashReady">Pronto para extrair</span></span
+                >
+                <strong id="dashProgressText" data-i18n="dashZeroProfiles"
+                  >0 perfis analisados</strong
+                >
+              </div>
+              <b
+                id="dashPercent"
+                title="Estimativa baseada nos perfis detectados pelo Google Maps"
+                >0%</b
+              >
+            </div>
+            <div class="dashboard-progress-track">
+              <span id="dashProgressBar" style="width: 0%"></span>
+            </div>
+            <div class="dashboard-progress-meta">
+              <span id="dashCurrentLead" data-i18n="dashWaitingMaps"
+                >Aguardando uma busca no Google Maps</span
+              >
+              <span id="dashUpdated">—</span>
+            </div>
+            <div class="dashboard-progress-actions">
+              <button
+                id="btnDashboardPause"
+                class="btn-dashboard-secondary"
+                disabled
+              >
+                <i class="fas fa-pause"></i>
+                <span data-i18n="dashPause">Pausar extração</span>
+              </button>
+              <button
+                id="btnDashboardStop"
+                class="btn-dashboard-danger"
+                disabled
+              >
+                <i class="fas fa-stop"></i>
+                <span data-i18n="dashStop">Encerrar</span>
+              </button>
+            </div>
+          </section>
+
+          <div class="dashboard-stats">
+            <article>
+              <span class="stat-icon stat-total"
+                ><i class="fas fa-users"></i
+              ></span>
+              <div>
+                <strong id="dashTotal">0</strong
+                ><small data-i18n="dashLeadsExtracted">leads extraídos</small>
+              </div>
+            </article>
+            <article>
+              <span class="stat-icon stat-phone"
+                ><i class="fas fa-phone"></i
+              ></span>
+              <div>
+                <strong id="dashPhones">0</strong
+                ><small data-i18n="dashWithPhone">com telefone</small>
+              </div>
+            </article>
+            <article>
+              <span class="stat-icon stat-email"
+                ><i class="fas fa-envelope"></i
+              ></span>
+              <div>
+                <strong id="dashEmails">0</strong
+                ><small data-i18n="dashWithEmail">com e-mail</small>
+              </div>
+            </article>
+            <article>
+              <span class="stat-icon stat-site"
+                ><i class="fas fa-globe"></i
+              ></span>
+              <div>
+                <strong id="dashNoSite">0</strong
+                ><small data-i18n="dashWithoutSite">sem site</small>
+              </div>
+            </article>
+          </div>
+
+          <section class="dashboard-list-card">
+            <div class="dashboard-list-head">
+              <div>
+                <h3 data-i18n="dashContactsFound">Contatos encontrados</h3>
+                <span id="dashListCount">0 registros</span>
+              </div>
+              <div class="dashboard-list-actions">
+                <button
+                  id="btnDashboardExport"
+                  data-i18n-title="dashDownloadCsv"
+                  title="Baixar CSV"
+                  disabled
+                >
+                  <i class="fas fa-download"></i>
+                </button>
+                <button
+                  id="btnDashboardSend"
+                  data-i18n-title="dashSendContacts"
+                  title="Enviar contatos ao disparador"
+                  disabled
+                >
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+            <label class="dashboard-search"
+              ><i class="fas fa-search"></i
+              ><input
+                id="dashboardSearch"
+                type="search"
+                data-i18n-ph="dashSearchPlaceholder"
+                placeholder="Buscar por nome, telefone ou e-mail"
+            /></label>
+            <div class="dashboard-table-head">
+              <span data-i18n="dashLeadColumn">Lead</span
+              ><span data-i18n="dashContactColumn">Contato</span
+              ><span data-i18n="dashStatusColumn">Status</span>
+            </div>
+            <div id="dashboardLeadList" class="dashboard-lead-list">
+              <div class="dashboard-empty">
+                <span><i class="fas fa-location-dot"></i></span
+                ><strong>Nenhum lead extraído</strong
+                ><small
+                  >Inicie uma extração no Google Maps para preencher esta
+                  lista.</small
+                >
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div id="dashboardListsPane" style="display: none">
+          <div class="saved-lists-toolbar">
+            <div>
+              <strong data-i18n="listsLibraryTitle"
+                >Biblioteca de contatos</strong
+              ><small data-i18n="listsLibraryDescription"
+                >Nomeie, consulte, baixe ou combine extrações.</small
+              >
+            </div>
+            <button id="btnMergeSelectedLists" disabled>
+              <i class="fas fa-code-merge"></i>
+              <span data-i18n="listsMergeSelected">Mesclar selecionadas</span>
+            </button>
+          </div>
+          <div id="savedListsContainer" class="saved-lists-container">
+            <div class="dashboard-empty">
+              <span><i class="fas fa-folder-plus"></i></span
+              ><strong>Nenhuma lista salva</strong
+              ><small>Ao concluir uma extração, use “Salvar como lista”.</small>
+            </div>
+          </div>
+        </div>
+
+        <div id="dashboardTemplatesPane" style="display: none">
+          <section class="message-template-builder">
+            <div class="template-builder-heading">
+              <span><i class="fas fa-wand-magic-sparkles"></i></span>
+              <div>
+                <strong data-i18n="templatesCreateTitle"
+                  >Criar modelo de mensagem</strong
+                ><small data-i18n="templatesCreateDescription"
+                  >Cadastre textos com Spintax e anexos para reutilizar no
+                  Disparador.</small
+                >
+              </div>
+            </div>
+            <div class="template-form-grid">
+              <label
+                ><span data-i18n="templatesNameLabel">Nome do modelo</span
+                ><input
+                  type="text"
+                  id="newTemplateName"
+                  class="modern-input"
+                  data-i18n-ph="templatesNamePlaceholder"
+                  placeholder="Ex: Prospecção de dentistas"
+              /></label>
+              <label class="template-message-field"
+                ><span data-i18n="templatesMessageLabel">Mensagem</span
+                ><textarea
+                  id="newTemplateText"
+                  class="modern-input"
+                  data-i18n-ph="templatesMessagePlaceholder"
+                  placeholder="Escreva a mensagem do modelo..."
+                ></textarea>
+              </label>
+            </div>
+            <div class="template-spintax-row">
+              <span
+                ><i class="fas fa-shuffle"></i>
+                <strong
+                  class="spintax-help-btn"
+                  data-i18n="templatesSpintaxHelp"
+                  >Spintax funcional:</strong
+                >
+                <span data-i18n="templatesSpintaxExample"
+                  >use {Oi|Olá} para variar cada envio.</span
+                ></span
+              >
+              <button id="btnRefreshSpintaxPreview" type="button">
+                <i class="fas fa-rotate"></i>
+                <span data-i18n="templatesGeneratePreview">Gerar exemplos</span>
+              </button>
+            </div>
+            <div
+              id="templateSpintaxPreview"
+              class="template-spintax-preview"
+              data-i18n="templatesPreviewEmpty"
+            >
+              As variações da mensagem aparecerão aqui.
+            </div>
+            <div class="template-attachment-row">
+              <button id="btnAttachTemplate" class="btn-ghost" type="button">
+                <i class="fas fa-paperclip"></i>
+                <span data-i18n="templatesAttach"
+                  >Anexar imagem ou documento</span
+                >
+              </button>
+              <input
+                type="file"
+                id="templateAttachmentInput"
+                accept="image/*,video/*,application/pdf"
+                style="display: none"
+              />
+              <button
+                id="btnRemoveTemplateAttach"
+                class="btn-ghost"
+                type="button"
+                style="display: none"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+              <div id="templateAttachmentName" data-i18n="noAttachment">
+                Nenhum anexo selecionado
+              </div>
+            </div>
+            <div class="template-builder-actions">
+              <button
+                id="btnCancelTemplateEdit"
+                class="btn-ghost"
+                type="button"
+                style="display: none"
+              >
+                <i class="fas fa-xmark"></i>
+                <span data-i18n="templatesCancelEdit">Cancelar edição</span>
+              </button>
+              <button id="btnSaveTemplate" class="btn-primary" type="button">
+                <i class="fas fa-save"></i>
+                <span data-i18n="templatesSave">Salvar modelo</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="dashboard-template-library">
+            <div class="dashboard-template-library-head">
+              <div>
+                <strong data-i18n="templatesSavedTitle">Modelos salvos</strong
+                ><small data-i18n="templatesSavedDescription"
+                  >Use, edite ou exclua seus modelos cadastrados.</small
+                >
+              </div>
+            </div>
+            <div id="templatesList" class="dashboard-templates-list">
+              <div class="dashboard-empty" id="emptyTemplates">
+                <span><i class="fas fa-message"></i></span
+                ><strong data-i18n="templatesEmpty">Nenhum modelo salvo</strong
+                ><small data-i18n="templatesEmptyDescription"
+                  >Crie o primeiro modelo no formulário acima.</small
+                >
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div id="dashboardCampaignsPane" style="display: none">
+          <div class="campaigns-toolbar">
+            <div>
+              <strong data-i18n="campaignsTitle">Campanhas e follow-ups</strong>
+              <small data-i18n="campaignsDescription"
+                >Programe tentativas adicionais e pare automaticamente quando houver resposta.</small
+              >
+            </div>
+            <button id="btnRefreshCampaigns" type="button" data-i18n-title="campaignsRefresh" title="Atualizar campanhas">
+              <i class="fas fa-rotate"></i>
+            </button>
+          </div>
+          <div class="campaign-safety-note">
+            <i class="fas fa-shield-heart"></i>
+            <span data-i18n="campaignsSafetyNote"
+              >O Chrome retoma prazos vencidos ao abrir. Antes de cada follow-up, o GeoLead abre a conversa e verifica se o contato respondeu.</span
+            >
+          </div>
+          <div id="campaignsContainer" class="campaigns-container">
+            <div class="dashboard-empty">
+              <span><i class="fas fa-clock-rotate-left"></i></span>
+              <strong data-i18n="campaignsEmpty">Nenhuma campanha ainda</strong>
+              <small data-i18n="campaignsEmptyDescription"
+                >O próximo disparo iniciado aparecerá aqui para você configurar os follow-ups.</small
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA EXTRATOR -->
+      <div id="viewExtractor" class="view-section active">
+        <div class="card">
+          <div class="section-header">
+            <h3 class="section-title" data-i18n="titleExtract">
+              Buscar Leads no Google Maps
+            </h3>
+          </div>
+          <p class="help-text" data-i18n="helpText1">
+            1. Digite o que deseja buscar (ex: "Dentistas em São Paulo").
+          </p>
+
+          <div class="input-group">
+            <span class="input-prefix" style="padding: 0 10px"
+              ><i class="fas fa-search"></i
+            ></span>
+            <input
+              type="text"
+              id="extractQuery"
+              data-i18n-ph="placeholderSearch"
+              placeholder="Ex: Dentistas em São Paulo"
+              style="
+                flex: 1;
+                border: none;
+                padding: 12px;
+                font-size: 14px;
+                outline: none;
+                font-family: inherit;
+                color: var(--text-main);
+                background: transparent;
+              "
+            />
+          </div>
+
+          <p class="help-text mt-15" data-i18n="helpText2">
+            2. Ajuste os filtros e clique em "Buscar Leads":
+          </p>
+
+          <div class="filters-grid">
+            <label class="filter-card">
+              <input type="checkbox" id="filterNoWebsite" />
+              <span class="filter-name" data-i18n="filterNoWebsite"
+                >Ignorar quem possui site</span
+              >
+            </label>
+            <label class="filter-card">
+              <input type="checkbox" id="filterPhone" />
+              <span class="filter-name" data-i18n="filterPhone"
+                >Exigir telefone</span
+              >
+            </label>
+            <label class="filter-card">
+              <input type="checkbox" id="filterEmail" />
+              <span class="filter-name" data-i18n="filterEmail"
+                >Exigir E-mail</span
+              >
+            </label>
+            <label class="filter-card">
+              <input type="checkbox" id="filterSocial" />
+              <span class="filter-name" data-i18n="filterSocial"
+                >Exigir Redes Sociais</span
+              >
+            </label>
+          </div>
+          <label class="extract-limit-card">
+            <span
+              ><i class="fas fa-gauge-high"></i
+              ><strong>Meta da varredura</strong
+              ><small
+                >O Google Maps precisa disponibilizar essa quantidade de
+                perfis.</small
+              ></span
+            >
+            <select id="extractLimit">
+              <option value="100">Até 100 leads</option>
+              <option value="200">Até 200 leads</option>
+              <option value="300" selected>Até 300 leads</option>
+              <option value="0">Máximo disponível</option>
+            </select>
+          </label>
+          <div style="margin-bottom: 15px">
+            <label
+              class="filter-card"
+              style="background: #f0fdf4; border-color: var(--primary)"
+            >
+              <input type="checkbox" id="autoSendAfter" />
+              <span
+                class="filter-name"
+                data-i18n="autoSendAfter"
+                style="color: var(--primary); font-weight: 600"
+                >Começar disparo automático ao terminar</span
+              >
+            </label>
+          </div>
+
+          <div style="display: flex; gap: 10px">
+            <button
+              id="btnStartExtract"
+              class="btn-primary btn-large"
+              style="flex: 2"
+            >
+              <i class="fas fa-magnifying-glass"></i>
+              <span data-i18n="btnStartExtract"
+                >Buscar Leads</span
+              >
+            </button>
+            <button
+              id="btnStopExtract"
+              class="btn-ghost"
+              style="
+                flex: 1;
+                border: 1px solid #d32f2f;
+                color: #d32f2f;
+                display: none;
+                cursor: pointer;
+                border-radius: 8px;
+                font-weight: 500;
+              "
+            >
+              <i class="fas fa-stop"></i>
+              <span data-i18n="btnStopExtract">Parar</span>
+            </button>
+          </div>
+
+          <div class="terminal mt-15" id="extractionTerminal">
+            <div class="log-entry system" data-i18n="terminalWait">
+              Pronto. Aguardando comando...
+            </div>
+          </div>
+
+          <div
+            id="extractionActions"
+            class="extraction-complete-card mt-15"
+            style="display: none"
+          >
+            <div class="extraction-complete-head">
+              <span><i class="fas fa-circle-check"></i></span>
+              <div>
+                <strong>Extração pronta</strong
+                ><small id="extractionSummary"
+                  >Seus contatos estão prontos para revisar.</small
+                >
+              </div>
+            </div>
+            <button id="btnSendToSendList" class="btn-send-extracted">
+              <span
+                ><i class="fab fa-whatsapp"></i
+                ><strong>Usar no Disparador</strong></span
+              ><i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="extraction-secondary-actions">
+              <button id="btnSaveExtractionList">
+                <i class="fas fa-folder-plus"></i> Salvar como lista
+              </button>
+              <button id="btnDownloadExtracted">
+                <i class="fas fa-download"></i> Baixar CSV
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA DISPARADOR -->
+      <div id="viewSender" class="view-section" style="display: none">
+        <div class="card sender-queue-card">
+          <div class="section-header sender-queue-header">
+            <div>
+              <h3 class="section-title">
+                <i class="fas fa-layer-group"></i>
+                <span data-i18n="senderQueueTitle">Fila de listas</span>
+                <span id="senderQueueCount" class="badge">0</span>
+              </h3>
+              <small data-i18n="senderQueueDescription">Cada lista vira uma campanha e será processada na ordem abaixo.</small>
+            </div>
+          </div>
+          <div class="sender-list-picker">
+            <select id="senderSavedListSelect" class="modern-select">
+              <option value="" data-i18n="senderQueueSelect">Selecione uma lista salva…</option>
+            </select>
+            <button id="btnQueueSavedList" class="btn-ghost" type="button">
+              <i class="fas fa-plus"></i>
+              <span data-i18n="senderQueueAdd">Adicionar</span>
+            </button>
+          </div>
+          <div id="senderListQueue" class="sender-list-queue">
+            <div class="sender-queue-empty">
+              <i class="fas fa-list-check"></i>
+              <span data-i18n="senderQueueEmpty">Nenhuma lista na fila. Você também pode usar contatos manuais.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-header">
+            <h3 class="section-title">
+              <span data-i18n="titleContacts">Contatos</span>
+              <span id="numCount" class="badge">0</span>
+            </h3>
+            <div style="display: flex; gap: 5px">
+              <button
+                id="btnClearContacts"
+                class="btn-ghost"
+                style="color: var(--danger); padding: 5px 8px"
+                title="Limpar todos os contatos"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button
+                id="btnUploadCsv"
+                class="btn-ghost"
+                data-i18n-title="titleImport"
+                title="Importar Lista, CSV ou Excel"
+              >
+                <i class="fas fa-file-import"></i>
+                <span data-i18n="btnImport">Importar</span>
+              </button>
+            </div>
+            <input
+              type="file"
+              id="csvFileInput"
+              accept=".csv,.txt,.xlsx,.xls"
+              style="display: none"
+            />
+          </div>
+
+          <div class="input-group" style="overflow: visible; z-index: 10;">
+            <div class="custom-select-wrapper" id="customCountrySelect">
+              <div class="custom-select-display" id="countryCodeDisplay">
+                <img src="https://flagcdn.com/w20/br.png" width="20" alt="BR"> +55
+              </div>
+              <ul class="custom-select-list" id="countryCodeList">
+                <li data-value="55" data-cc="br" data-code="+55"><img src="https://flagcdn.com/w20/br.png" width="20" alt="BR"> Brasil (+55)</li>
+                <li data-value="1" data-cc="us" data-code="+1"><img src="https://flagcdn.com/w20/us.png" width="20" alt="US"> EUA (+1)</li>
+                <li data-value="351" data-cc="pt" data-code="+351"><img src="https://flagcdn.com/w20/pt.png" width="20" alt="PT"> Portugal (+351)</li>
+                <li data-value="54" data-cc="ar" data-code="+54"><img src="https://flagcdn.com/w20/ar.png" width="20" alt="AR"> Argentina (+54)</li>
+                <li data-value="52" data-cc="mx" data-code="+52"><img src="https://flagcdn.com/w20/mx.png" width="20" alt="MX"> México (+52)</li>
+                <li data-value="57" data-cc="co" data-code="+57"><img src="https://flagcdn.com/w20/co.png" width="20" alt="CO"> Colômbia (+57)</li>
+                <li data-value="56" data-cc="cl" data-code="+56"><img src="https://flagcdn.com/w20/cl.png" width="20" alt="CL"> Chile (+56)</li>
+                <li data-value="51" data-cc="pe" data-code="+51"><img src="https://flagcdn.com/w20/pe.png" width="20" alt="PE"> Peru (+51)</li>
+                <li data-value="598" data-cc="uy" data-code="+598"><img src="https://flagcdn.com/w20/uy.png" width="20" alt="UY"> Uruguai (+598)</li>
+                <li data-value="595" data-cc="py" data-code="+595"><img src="https://flagcdn.com/w20/py.png" width="20" alt="PY"> Paraguai (+595)</li>
+                <li data-value="58" data-cc="ve" data-code="+58"><img src="https://flagcdn.com/w20/ve.png" width="20" alt="VE"> Venezuela (+58)</li>
+                <li data-value="591" data-cc="bo" data-code="+591"><img src="https://flagcdn.com/w20/bo.png" width="20" alt="BO"> Bolívia (+591)</li>
+                <li data-value="593" data-cc="ec" data-code="+593"><img src="https://flagcdn.com/w20/ec.png" width="20" alt="EC"> Equador (+593)</li>
+                <li data-value="34" data-cc="es" data-code="+34"><img src="https://flagcdn.com/w20/es.png" width="20" alt="ES"> Espanha (+34)</li>
+                <li data-value="39" data-cc="it" data-code="+39"><img src="https://flagcdn.com/w20/it.png" width="20" alt="IT"> Itália (+39)</li>
+                <li data-value="33" data-cc="fr" data-code="+33"><img src="https://flagcdn.com/w20/fr.png" width="20" alt="FR"> França (+33)</li>
+                <li data-value="49" data-cc="de" data-code="+49"><img src="https://flagcdn.com/w20/de.png" width="20" alt="DE"> Alemanha (+49)</li>
+                <li data-value="44" data-cc="gb" data-code="+44"><img src="https://flagcdn.com/w20/gb.png" width="20" alt="GB"> Reino Unido (+44)</li>
+              </ul>
+              <input type="hidden" id="countryCode" value="55">
+            </div>
+            <input
+              type="text"
+              id="phoneInput"
+              data-i18n-ph="placeholderPhone"
+              placeholder="Número (e aperte Enter)"
+            />
+            <button id="btnAddPhone" class="btn-icon">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+
+          <div class="numbers-list" id="numbersList">
+            <div class="empty-state" id="emptyState" data-i18n="emptyContacts">
+              Nenhum contato adicionado
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-15">
+          <div class="section-header">
+            <h3 class="section-title" data-i18n="titleMessage">Mensagem</h3>
+          </div>
+          <div class="tabs-container">
+            <div class="tab-btn active" id="tabText">
+              <i class="fas fa-font"></i> <span data-i18n="tabText">Texto</span>
+            </div>
+            <div class="tab-btn" id="tabAudio">
+              <i class="fas fa-microphone"></i>
+              <span data-i18n="tabAudio">Áudio</span>
+            </div>
+          </div>
+
+          <!-- CONTEÚDO TEXTO -->
+          <div id="textSection">
+            <textarea
+              id="message"
+              class="modern-input"
+              data-i18n-ph="placeholderMessage"
+              placeholder="Escreva sua mensagem..."
+            ></textarea>
+
+            <div
+              style="font-size: 11px; color: var(--text-muted); margin-top: 5px"
+            >
+              <i class="fas fa-lightbulb" style="color: #fbbf24"></i>
+              <strong
+                class="spintax-help-btn"
+                style="
+                  cursor: pointer;
+                  color: var(--primary);
+                  text-decoration: underline;
+                "
+                title="Clique para ver exemplo"
+                >Spintax:</strong
+              >
+              <span data-i18n="tipSpintax"
+                >Use {Oi|Olá} para alternar palavras automaticamente a cada
+                envio.</span
+              >
+            </div>
+
+            <select
+              id="templateSelect"
+              class="modern-select mt-10"
+              style="display: none"
+            >
+              <option value="">Selecione um modelo...</option>
+            </select>
+
+            <div class="mt-15" style="display: flex; gap: 10px">
+              <button id="btnAttach" class="btn-ghost" style="flex: 1">
+                <i class="fas fa-paperclip"></i>
+                <span data-i18n="btnAttach">Anexar</span>
+              </button>
+              <input
+                type="file"
+                id="attachmentInput"
+                accept="image/*,video/*,application/pdf"
+                style="display: none"
+              />
+              <button
+                id="btnRemoveAttach"
+                class="btn-ghost"
+                style="display: none; color: var(--danger)"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div
+              id="attachmentName"
+              style="
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: 5px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+              "
+              data-i18n="noAttachment"
+            >
+              Nenhum anexo selecionado
+            </div>
+          </div>
+
+          <!-- CONTEÚDO ÁUDIO -->
+          <div id="audioSection" style="display: none">
+            <div class="microphone-device-row">
+              <label for="microphoneSelect"
+                ><i class="fas fa-microphone-lines"></i>
+                <span data-i18n="microphoneLabel">Microfone</span></label
+              >
+              <select id="microphoneSelect" class="modern-select">
+                <option value="" data-i18n="microphoneDefault">
+                  Padrão do sistema
+                </option>
+              </select>
+              <button
+                id="btnRefreshMicrophones"
+                class="btn-ghost"
+                type="button"
+                data-i18n-title="microphoneRefresh"
+                title="Atualizar microfones"
+              >
+                <i class="fas fa-rotate"></i>
+              </button>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <button
+                id="btnRecordAudio"
+                class="btn-primary btn-large"
+                style="flex: 1; border-radius: 8px"
+              >
+                <i class="fas fa-microphone"></i>
+                <span data-i18n="btnRecord">Gravar Áudio</span>
+              </button>
+              <button
+                id="btnStopRecord"
+                class="btn-ghost btn-large"
+                style="
+                  flex: 1;
+                  display: none;
+                  color: var(--danger);
+                  border: 2px solid var(--danger);
+                  border-radius: 8px;
+                  font-weight: bold;
+                "
+              >
+                <i class="fas fa-stop"></i>
+                <span data-i18n="btnStopRecord">Parar Gravação</span>
+              </button>
+              <span
+                id="recordTimer"
+                style="
+                  font-family: monospace;
+                  font-size: 16px;
+                  min-width: 45px;
+                  text-align: center;
+                  color: var(--text-main);
+                  font-weight: bold;
+                "
+                >00:00</span
+              >
+            </div>
+            <div
+              id="audioPreviewContainer"
+              class="mt-15"
+              style="
+                display: none;
+                align-items: center;
+                gap: 10px;
+                background: #f8fafc;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+              "
+            >
+              <audio
+                id="audioPreview"
+                controls
+                style="width: 100%; height: 35px; outline: none"
+              ></audio>
+              <button
+                id="btnRemoveAudio"
+                class="btn-ghost"
+                style="color: var(--danger); padding: 5px 10px"
+                title="Remover Áudio"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            <div class="audio-import-row">
+              <button id="btnUploadAudio" class="btn-ghost" type="button">
+                <i class="fas fa-file-audio"></i> Importar MP3, M4A ou OGG
+              </button>
+              <input
+                type="file"
+                id="audioFileInput"
+                accept=".mp3,.m4a,.aac,.ogg,audio/mpeg,audio/mp4,audio/aac,audio/ogg"
+                style="display: none"
+              />
+            </div>
+            <div id="audioFormatStatus" class="audio-format-status">
+              <i class="fas fa-circle-check"></i> A gravação será preparada em
+              formato compatível com o WhatsApp.
+            </div>
+          </div>
+
+          <div
+            id="msgWarning"
+            style="
+              color: var(--danger);
+              font-size: 11px;
+              margin-top: 10px;
+              display: none;
+            "
+            data-i18n="msgWarning"
+          >
+            Você precisa definir uma mensagem de texto ou um áudio.
+          </div>
+        </div>
+
+        <div class="card mt-15" style="padding: 12px 20px">
+          <div class="section-header" style="margin-bottom: 12px">
+            <h3 class="section-title" data-i18n="delayLabel">
+              <i class="fas fa-clock" style="color: var(--primary)"></i>
+              Intervalo de Envio
+            </h3>
+          </div>
+
+          <!-- Delay configuration -->
+          <label class="filter-card" style="margin-bottom: 10px">
+            <input type="checkbox" id="useRandomDelay" />
+            <span class="filter-name" data-i18n="useRandomDelay"
+              >Usar variação aleatória de tempo</span
+            >
+          </label>
+
+          <div id="fixedDelayContainer" class="delay-settings-box">
+            <span class="delay-label">Aguardar:</span>
+            <input
+              type="number"
+              id="delayValue"
+              class="modern-input delay-input"
+              value="10"
+              min="1"
+            />
+            <select id="delayUnit" class="modern-input delay-select">
+              <option value="1">Segundos</option>
+              <option value="60">Minutos</option>
+            </select>
+          </div>
+
+          <div
+            id="randomDelayContainer"
+            class="delay-settings-box"
+            style="display: none"
+          >
+            <span class="delay-label" data-i18n="minLabel">Mín:</span>
+            <input
+              type="number"
+              id="delayMin"
+              class="modern-input delay-input"
+              value="10"
+              min="1"
+            />
+            <span class="delay-label" data-i18n="maxLabel">Máx:</span>
+            <input
+              type="number"
+              id="delayMax"
+              class="modern-input delay-input"
+              value="23"
+              min="1"
+            />
+            <select id="delayUnitRandom" class="modern-input delay-select">
+              <option value="1">Segundos</option>
+              <option value="60">Minutos</option>
+            </select>
+          </div>
+
+          <!-- Pause configuration -->
+          <label
+            class="filter-card"
+            style="margin-bottom: 10px; margin-top: 15px"
+          >
+            <input type="checkbox" id="usePause" />
+            <span class="filter-name" data-i18n="usePause"
+              >Pausar envios (Simular humano)</span
+            >
+          </label>
+
+          <div
+            id="pauseContainer"
+            class="delay-settings-box"
+            style="display: none"
+          >
+            <span class="delay-label" data-i18n="pauseText1">Pausar</span>
+            <input
+              type="number"
+              id="pauseDuration"
+              class="modern-input delay-input"
+              value="5"
+              min="1"
+            />
+            <span class="delay-label" data-i18n="pauseText2">min a cada</span>
+            <input
+              type="number"
+              id="pauseEvery"
+              class="modern-input delay-input"
+              value="30"
+              min="1"
+            />
+            <span class="delay-label" data-i18n="pauseText3">msgs</span>
+          </div>
+          <div id="behaviorSummary" class="behavior-summary">
+            <i class="fas fa-shield-heart"></i
+            ><span>Intervalo fixo de 10 segundos.</span>
+          </div>
+        </div>
+
+        <section id="senderProgressCard" class="sender-dispatch-progress">
+          <div class="sender-progress-head">
+            <span id="senderProgressStatus"><i></i> <span data-i18n="senderProgressReady">Pronto para iniciar</span></span>
+            <strong id="senderProgressPercent">0%</strong>
+          </div>
+          <div class="sender-progress-track"><span id="senderProgressBar" style="width: 0%"></span></div>
+          <div class="sender-progress-meta">
+            <span id="senderProgressText">0 de 0 contatos</span>
+            <span id="senderCurrentBatch" data-i18n="senderProgressNoList">Nenhuma campanha em execução</span>
+          </div>
+          <div id="senderBatchProgress" class="sender-batch-progress"></div>
+        </section>
+
+        <button id="startBtn" class="btn-primary btn-large mt-15" disabled>
+          <i class="fas fa-paper-plane"></i>
+          <span data-i18n="btnStartSend">Iniciar Disparos</span>
+        </button>
+        <button
+          id="stopBtn"
+          class="btn-danger btn-large mt-15"
+          style="display: none"
+        >
+          <i class="fas fa-stop"></i> <span data-i18n="btnStopSend">Parar</span>
+        </button>
+
+        <div class="status-bar">
+          <div class="status-item">
+            <span class="status-label" data-i18n="statSent">Enviados</span>
+            <span class="status-value text-blue" id="sentCount">0</span>
+          </div>
+          <div class="divider"></div>
+          <div class="status-item">
+            <span class="status-label" data-i18n="statErrors">Falhas</span>
+            <span class="status-value text-red" id="errCount">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE LISTA DE CONTATOS -->
+    <div id="contactListModal" class="modal-overlay" style="display: none">
+      <div class="modal-content contact-list-modal">
+        <div class="contact-list-modal-icon">
+          <i class="fas fa-folder-plus"></i>
+        </div>
+        <span id="contactListModalKicker">Salvar extração</span>
+        <h3 id="contactListModalTitle">Dê um nome para esta lista</h3>
+        <p id="contactListModalDescription">
+          Os contatos ficarão disponíveis no dashboard para consulta, download e
+          mesclagem.
+        </p>
+        <input
+          id="contactListName"
+          class="modern-input"
+          type="text"
+          maxlength="60"
+          data-i18n-ph="listNamePlaceholder"
+          placeholder="Ex: Dentistas de Curitiba · Agosto"
+          autocomplete="off"
+        />
+        <div class="contact-list-modal-actions">
+          <button
+            id="btnCancelContactList"
+            class="btn-ghost"
+            data-i18n="modalCancel"
+          >
+            Cancelar
+          </button>
+          <button id="btnConfirmContactList" class="btn-primary">
+            <i class="fas fa-check"></i> Salvar lista
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIGURAÇÃO DE FOLLOW-UP -->
+    <div id="followupModal" class="modal-overlay" style="display: none">
+      <div class="modal-content followup-modal">
+        <div class="followup-modal-head">
+          <span><i class="fas fa-clock-rotate-left"></i></span>
+          <div>
+            <small data-i18n="followupModalKicker">AUTOMAÇÃO SEGURA</small>
+            <h3 id="followupModalTitle">Configurar follow-ups</h3>
+          </div>
+        </div>
+        <p data-i18n="followupModalDescription">
+          Escolha até três modelos de texto. Cada prazo começa após o último envio confirmado.
+        </p>
+
+        <div class="followup-steps" id="followupSteps">
+          <div class="followup-step" data-step="1">
+            <label class="followup-step-toggle"><input id="followupStep1Enabled" type="checkbox" checked /><span>1</span></label>
+            <div class="followup-step-fields">
+              <label><span data-i18n="followupWait">Aguardar</span><input id="followupStep1Delay" type="number" min="1" max="365" value="1" /></label>
+              <label><span data-i18n="followupUnit">Unidade</span><select id="followupStep1Unit"><option value="days" data-i18n="followupDays">dias</option><option value="hours" data-i18n="followupHours">horas</option></select></label>
+              <label class="followup-template-field"><span data-i18n="followupTemplate">Modelo</span><select id="followupStep1Template"></select></label>
+            </div>
+          </div>
+          <div class="followup-step" data-step="2">
+            <label class="followup-step-toggle"><input id="followupStep2Enabled" type="checkbox" /><span>2</span></label>
+            <div class="followup-step-fields">
+              <label><span data-i18n="followupWait">Aguardar</span><input id="followupStep2Delay" type="number" min="1" max="365" value="3" /></label>
+              <label><span data-i18n="followupUnit">Unidade</span><select id="followupStep2Unit"><option value="days" data-i18n="followupDays">dias</option><option value="hours" data-i18n="followupHours">horas</option></select></label>
+              <label class="followup-template-field"><span data-i18n="followupTemplate">Modelo</span><select id="followupStep2Template"></select></label>
+            </div>
+          </div>
+          <div class="followup-step" data-step="3">
+            <label class="followup-step-toggle"><input id="followupStep3Enabled" type="checkbox" /><span>3</span></label>
+            <div class="followup-step-fields">
+              <label><span data-i18n="followupWait">Aguardar</span><input id="followupStep3Delay" type="number" min="1" max="365" value="7" /></label>
+              <label><span data-i18n="followupUnit">Unidade</span><select id="followupStep3Unit"><option value="days" data-i18n="followupDays">dias</option><option value="hours" data-i18n="followupHours">horas</option></select></label>
+              <label class="followup-template-field"><span data-i18n="followupTemplate">Modelo</span><select id="followupStep3Template"></select></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="followup-hours-card">
+          <label class="followup-hours-toggle"><input id="followupBusinessHours" type="checkbox" checked /><span data-i18n="followupBusinessHours">Respeitar horário de envio</span></label>
+          <div class="followup-hours-row">
+            <label><span data-i18n="followupFrom">Das</span><input id="followupStartTime" type="time" value="09:00" /></label>
+            <label><span data-i18n="followupTo">Até</span><input id="followupEndTime" type="time" value="18:00" /></label>
+            <label class="followup-weekends"><input id="followupIncludeWeekends" type="checkbox" /><span data-i18n="followupWeekends">Incluir fins de semana</span></label>
+          </div>
+        </div>
+
+        <label class="followup-confirmation">
+          <input id="followupConfirmAudience" type="checkbox" />
+          <span data-i18n="followupConfirmation">Revisei destinatários, modelos e horários desta campanha.</span>
+        </label>
+        <div class="followup-modal-actions">
+          <button id="btnCancelFollowup" class="btn-ghost" type="button" data-i18n="modalCancel">Cancelar</button>
+          <button id="btnSaveFollowup" class="btn-primary" type="button"><i class="fas fa-play"></i> <span data-i18n="followupActivate">Ativar follow-ups</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA DE LICENÇA (OCULTA POR PADRÃO) -->
+    <div id="licenseOverlay" class="license-overlay" style="display: none">
+      <div class="license-card">
+        <div class="license-header">
+          <div class="lock-icon-container">
+            <img
+              src="kiwify-logo.png"
+              alt="Kiwify Logo"
+              style="width: 45px; object-fit: contain"
+            />
+          </div>
+          <h2>Seu Teste Expirou</h2>
+          <p>
+            O período de avaliação chegou ao fim. Para continuar usando o
+            GeoLead, acesse a página de licença.
+          </p>
+        </div>
+
+        <a
+          href="https://pay.kiwify.com.br/aPkImjR"
+          target="_blank"
+          class="btn-buy-kiwify"
+        >
+          <i class="fas fa-shopping-cart"></i> Abrir página de licença
+        </a>
+
+        <div class="license-divider">
+          <span>Já comprou?</span>
+        </div>
+
+        <div class="license-activation">
+          <div class="activation-input-group">
+            <i class="fas fa-envelope"></i>
+            <input
+              type="email"
+              id="licenseEmailInput"
+              placeholder="Digite seu E-mail de compra"
+              autocomplete="email"
+            />
+            <button id="btnActivateLicense" title="Validar E-mail">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+          <div
+            id="licenseError"
+            class="license-error-msg"
+            style="display: none"
+          >
+            <i class="fas fa-exclamation-circle"></i> E-mail não encontrado ou
+            compra não aprovada.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA DE SUCESSO (OCULTA POR PADRÃO) -->
+    <div id="successOverlay" class="success-overlay" style="display: none">
+      <div class="success-card">
+        <div class="success-icon-container">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Muito Obrigado!</h2>
+        <p>
+          Sua licença foi ativada com sucesso. Bem-vindo(a) definitivo ao
+          GeoLead!
+        </p>
+        <button id="btnCloseSuccess" class="btn-success-close">
+          Começar a Usar
+        </button>
+      </div>
+    </div>
+
+    <!-- IMAGE PREVIEW OVERLAY -->
+    <div
+      id="imagePreviewOverlay"
+      class="modal-overlay"
+      style="
+        display: none;
+        z-index: 10001;
+        cursor: pointer;
+        backdrop-filter: blur(5px);
+      "
+    >
+      <img
+        id="imagePreviewImg"
+        style="
+          max-width: 85%;
+          max-height: 85%;
+          border-radius: 12px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+          object-fit: contain;
+          animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        "
+      />
+    </div>
+
+    <!-- SPINTAX HELP MODAL -->
+    <div
+      id="spintaxHelpModal"
+      class="modal-overlay"
+      style="display: none; z-index: 10002; backdrop-filter: blur(2px)"
+    >
+      <div
+        class="modal-content"
+        style="
+          max-width: 500px;
+          padding: 20px;
+          animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        "
+      >
+        <div class="modal-header">
+          <h3 style="margin: 0; font-size: 16px; color: var(--text-main)">
+            <i class="fas fa-magic" style="color: var(--primary)"></i> Como usar
+            o Spintax?
+          </h3>
+          <button id="btnCloseSpintaxHelp" class="btn-icon">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p
+            style="
+              font-size: 13px;
+              color: var(--text-muted);
+              margin-bottom: 15px;
+            "
+          >
+            O Spintax permite que você crie variações da sua mensagem. O sistema
+            irá sortear uma das opções separadas por <code>|</code> dentro das
+            chaves <code>{}</code> para cada envio. Isso ajuda a
+            <b>evitar bloqueios</b>, pois cada mensagem será única!
+          </p>
+          <div
+            id="spintaxExampleText"
+            style="
+              background: #f8fafc;
+              border: 1px solid var(--border);
+              border-radius: 8px;
+              padding: 12px;
+              font-size: 12px;
+              color: var(--text-main);
+              white-space: pre-wrap;
+              margin-bottom: 15px;
+              max-height: 300px;
+              overflow-y: auto;
+            "
+          >{Oi|Olá|Opa}! {Tudo bem?|Como vai?}
+
+Encontrei o contato da sua empresa no Google Maps e vi que vocês {ainda não têm|não possuem} uma forma fácil de captar novos clientes pela internet.
+
+Tenho uma ferramenta que busca leads comerciais automaticamente por apenas R$ 29,90/mês — sem contrato, cancela quando quiser.
+
+Posso te mostrar como funciona em 2 minutos?
+
+[COLE O SEU LINK AQUI]
+
+Se tiver qualquer dúvida, é só me {dar um alô|chamar} por aqui mesmo!</div>
+          <button
+            id="btnCopySpintax"
+            class="btn-primary btn-large"
+            style="width: 100%; border-radius: 8px"
+          >
+            <i class="fas fa-copy"></i> Copiar Exemplo para Testar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="xlsx.full.min.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
