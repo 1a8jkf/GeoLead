@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Permissão de Microfone - Lumo Sender</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f4f5f7;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        .perm-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            max-width: 400px;
+        }
+        h2 { margin-top: 0; color: #333; }
+        p { color: #666; line-height: 1.5; margin-bottom: 25px; }
+        #status {
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="perm-card">
+        <h2>Permissão de Áudio 🎤</h2>
+        <p>Para enviar áudios, a extensão Lumo Sender precisa de acesso ao seu microfone.</p>
+        <p>Como o Google Chrome bloqueia pedidos direto no painel da extensão, precisamos que você permita o acesso por aqui.</p>
+        <button id="btnAllow" class="btn-primary btn-large" style="width: 100%;">
+            Liberar Acesso ao Microfone
+        </button>
+        <div id="status">✅ Acesso concedido!<br><br>Você já pode fechar esta aba e voltar para a extensão.</div>
+    </div>
+    <script src="permission.js"></script>
+</body>
+</html>
